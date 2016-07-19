@@ -1,6 +1,7 @@
 package com.cloudprint;
 
 import android.content.Context;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
@@ -31,6 +32,19 @@ public class CloudPrint {
     public static void showToast(String str)
     {
         Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
+    }
+
+    public static Boolean isGPSEnabled()
+    {
+        final LocationManager manager = (LocationManager) context.getSystemService( Context.LOCATION_SERVICE );
+
+        if ( manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public static boolean isNetworkOK(Context cx) {
