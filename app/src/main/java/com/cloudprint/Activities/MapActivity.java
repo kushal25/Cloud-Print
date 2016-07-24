@@ -60,7 +60,7 @@ public class MapActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
+        //for snackbar usage creating an object of view
         v = (View) drawer;
     }
 
@@ -100,13 +100,14 @@ public class MapActivity extends AppCompatActivity
             }
             else
             {
-                Snackbar.make(v, "Enable GPS", Snackbar.LENGTH_LONG);
+                Snackbar.make(v, "Enable GPS", Snackbar.LENGTH_LONG).show();
                 //CloudPrint.showToast("Enable GPS");
             }
         }
         else
         {
-            CloudPrint.showToast("Need Location Permission");
+            Snackbar.make(v,"Need Location Permission", Snackbar.LENGTH_LONG).show();
+            //CloudPrint.showToast("Need Location Permission");
         }
     }
 
