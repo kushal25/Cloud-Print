@@ -4,7 +4,9 @@ import android.content.Context;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 public class CloudPrint {
@@ -32,6 +34,20 @@ public class CloudPrint {
     public static void showToast(String str)
     {
         Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
+    }
+
+    public static void showSnackBar(View view, String str)
+    {
+        final Snackbar sb = Snackbar.make(view, str , Snackbar.LENGTH_LONG);
+
+        sb.setAction("UNDO", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        sb.dismiss();
+                    }
+                });
+
+        sb.show();
     }
 
     public static Boolean isGPSEnabled()

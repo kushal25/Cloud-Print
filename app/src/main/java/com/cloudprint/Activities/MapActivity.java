@@ -32,14 +32,17 @@ public class MapActivity extends AppCompatActivity
 
     private GoogleMap mMap;
     private View v;
+    private SupportMapFragment mapFragment;
+    private DrawerLayout drawer;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        initViews();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -51,17 +54,21 @@ public class MapActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+    }
+
+    public void initViews()
+    {
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         //for snackbar usage creating an object of view
         v = (View) drawer;
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
     }
 
     @Override
@@ -77,8 +84,6 @@ public class MapActivity extends AppCompatActivity
                 if (location != null) {
 
                     LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
-//                    String message = String.format("latitude = %f longitude = %f", location.getLatitude(), location.getLongitude());
-//                    Log.i("Location", message);
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 13));
                 } else {
                     Log.i("location", "Its NULL");
@@ -100,14 +105,12 @@ public class MapActivity extends AppCompatActivity
             }
             else
             {
-                Snackbar.make(v, "Enable GPS", Snackbar.LENGTH_LONG).show();
-                //CloudPrint.showToast("Enable GPS");
+                CloudPrint.showSnackBar(v,"Enable GPS");
             }
         }
         else
         {
-            Snackbar.make(v,"Need Location Permission", Snackbar.LENGTH_LONG).show();
-            //CloudPrint.showToast("Need Location Permission");
+            CloudPrint.showSnackBar(v,"Need Location Permission");
         }
     }
 
