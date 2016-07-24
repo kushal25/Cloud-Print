@@ -1,4 +1,4 @@
-package com.cloudprint;
+package com.cloudprint.Activities;
 
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -31,6 +31,7 @@ public class MapActivity extends AppCompatActivity
         implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
 
     private GoogleMap mMap;
+    private View v;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +59,9 @@ public class MapActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        v = (View) drawer;
     }
 
     @Override
@@ -96,7 +100,8 @@ public class MapActivity extends AppCompatActivity
             }
             else
             {
-                CloudPrint.showToast("Enable GPS");
+                Snackbar.make(v, "Enable GPS", Snackbar.LENGTH_LONG);
+                //CloudPrint.showToast("Enable GPS");
             }
         }
         else
