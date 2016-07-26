@@ -1,6 +1,7 @@
 package com.cloudprint;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -12,8 +13,9 @@ import android.widget.Toast;
 public class CloudPrint {
 
     private static Context context;
+    public static Typeface fontAwesome = null;
     public static void appInit(Context cx) {
-        //P.read(cx);
+        P.read(cx);
         context = cx;
     }
 
@@ -79,6 +81,21 @@ public class CloudPrint {
             return false;
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    public static final class P {
+
+        public static void read(Context cx)
+        {
+            try {
+                if (null == fontAwesome) {
+                    fontAwesome = Typeface.createFromAsset(cx.getAssets(), "fontawesome-webfont.ttf");
+                }
+            }catch(Exception e)
+            {
+                e.printStackTrace();
+            }
         }
     }
 

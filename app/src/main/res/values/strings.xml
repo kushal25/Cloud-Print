@@ -22,4 +22,10 @@
     ]]>
     </string>
 
+
+    <!-- icons -->
+    <string name="navigation">&#xf0c9;</string>
+    <string name="title_activity_test">TestActivity</string>
+    <string name="title_activity_main">MainActivity</string>
+
 </resources>

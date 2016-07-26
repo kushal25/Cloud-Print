@@ -1,8 +1,10 @@
 package com.cloudprint.Activities;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.location.Criteria;
 import android.location.Location;
@@ -10,6 +12,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
@@ -32,7 +35,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cloudprint.CloudPrint;
+import com.cloudprint.Markers;
 import com.cloudprint.R;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
@@ -44,6 +51,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.opencsv.CSVReader;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapActivity extends AppCompatActivity
         implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
@@ -58,68 +72,95 @@ public class MapActivity extends AppCompatActivity
     private LocationManager locationManager;
     private Criteria criteria;
     private Location location;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
+
+    private String CSV_PATH = "sample.csv";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         initViews();
+        populateData();
         //setSupportActionBar(toolbar);
+
         mapFragment.getMapAsync(this);
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        drawer.setDrawerListener(toggle);
-//        toggle.syncState();
-        //navigationView.setNavigationItemSelectedListener(this);
+//        actionBarDrawerToggle=new ActionBarDrawerToggle(this,  drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//
+//        drawer.setDrawerListener(actionBarDrawerToggle);
+//        actionBarDrawerToggle.syncState();
+//        navigationView.setNavigationItemSelectedListener(this);
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                // TODO: Get info about the selected place.
                 Log.i(TAG, "Place: " + place.getName());
-
-                String placeDetailsStr = place.getName() + "\n"
-                        + place.getId() + "\n"
-                        + place.getLatLng().toString() + "\n"
-                        + place.getAddress() + "\n"
-                        + place.getAttributions();
 
                 mMap.addMarker(new MarkerOptions()
                         .position(place.getLatLng())
                         .title(place.getAddress().toString()));
 
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),13));
-                Log.d(TAG,placeDetailsStr);
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 13));
             }
 
             @Override
             public void onError(Status status) {
-                // TODO: Handle the error.
                 Log.i(TAG, "An error occurred: " + status);
             }
         });
 
     }
 
-    public void initViews()
-    {
+    public void populateData() {
+        Markers markers = new Markers();
+        List<String[]> data = readCsv(this);
+        Log.d(TAG,"Hello");
+        Log.d(TAG,data.size()+"");
+        //markers.setLatitude();
+    }
+
+    public final List<String[]> readCsv(Context context) {
+        List<String[]> questionList = new ArrayList<String[]>();
+        AssetManager assetManager = context.getAssets();
+
+        try {
+
+            InputStream csvStream = assetManager.open(CSV_PATH);
+            Log.d(TAG,"Hello1");
+            InputStreamReader csvStreamReader = new InputStreamReader(csvStream);
+            CSVReader csvReader = new CSVReader(csvStreamReader);
+            String[] line;
+
+            // throw away the header
+            csvReader.readNext();
+
+            while ((line = csvReader.readNext()) != null) {
+                questionList.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG,"Hello2");
+        }
+        return questionList;
+    }
+
+
+    public void initViews() {
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        //navigationView = (NavigationView) findViewById(R.id.nav_view);
-        //toolbar = (Toolbar) findViewById(R.id.toolbar);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.autocomplete_fragment);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-        {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap = googleMap;
-            if(CloudPrint.isGPSEnabled())
-            {
+            if (CloudPrint.isGPSEnabled()) {
                 View locationButton = mapFragment.getView().findViewById(Integer.parseInt("2"));
-                RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams)locationButton.getLayoutParams();
+                RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
 
                 rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
                 rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
@@ -149,15 +190,11 @@ public class MapActivity extends AppCompatActivity
                         .position(new LatLng(37.343329, -121.8915832))
                         .title("Mi Pueblo")
                         .snippet("this shows desciption of place"));
+            } else {
+                CloudPrint.showSnackBar(drawer, "Enable GPS");
             }
-            else
-            {
-                CloudPrint.showSnackBar(drawer,"Enable GPS");
-            }
-        }
-        else
-        {
-            CloudPrint.showSnackBar(drawer,"Need Location Permission");
+        } else {
+            CloudPrint.showSnackBar(drawer, "Need Location Permission");
         }
     }
 
@@ -217,4 +254,5 @@ public class MapActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }
