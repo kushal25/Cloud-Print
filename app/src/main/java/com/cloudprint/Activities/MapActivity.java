@@ -78,7 +78,6 @@ public class MapActivity extends AppCompatActivity
     private Criteria criteria;
     private Location location;
     private ActionBarDrawerToggle actionBarDrawerToggle;
-    private String CSV_PATH = "sample.csv";
     private TextView loader;
 
     @Override
@@ -92,10 +91,23 @@ public class MapActivity extends AppCompatActivity
         actionBarDrawerToggle=new ActionBarDrawerToggle(this,  drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
         drawer.setDrawerListener(actionBarDrawerToggle);
-        drawer.bringToFront();
-        navigationView.requestLayout();
+        navigationView.bringToFront();
+        drawer.requestLayout();
         actionBarDrawerToggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.bringToFront();
+        fab.requestLayout();
+        fab.setOnClickListener(new View.OnClickListener() {
+               @Override
+                public void onClick(View view) {
+                   Intent print = new Intent(MapActivity.this, MapListView.class);
+                   startActivity(print);
+                   }
+            });
+
+
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -113,14 +125,20 @@ public class MapActivity extends AppCompatActivity
                 Log.i(TAG, "An error occurred: " + status);
             }
         });
+    }
 
-
+    public void initViews() {
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //loader = (TextView) findViewById(R.id.loader);
+        autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.autocomplete_fragment);
     }
 
     public void populateData(GoogleMap gMap) {
         final GoogleMap mMap = gMap;
-        final List<String[]> data = readCsv(getApplicationContext());
-        Log.d(TAG,"Hello");
+        final List<String[]> data = CloudPrint.readCsv(getApplicationContext());
         MapActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -131,61 +149,31 @@ public class MapActivity extends AppCompatActivity
                     mMap.addMarker(new MarkerOptions()
                             .position(new LatLng(Double.parseDouble(data.get(i)[26]), Double.parseDouble(data.get(i)[25])))
                             .title(data.get(i)[4])
-                            .snippet("this shows desciption of place"));
+                            .snippet(data.get(i)[5]+","+data.get(i)[6]));
 
 
                 }
             }
         });
-        hideProgressLoader();
+        //hideProgressLoader();
 
     }
 
-    public void showProgressLoader() {
-        RotateAnimation rotateAnimation = new RotateAnimation(0, 359, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        rotateAnimation.setDuration(1600);
-        rotateAnimation.setRepeatCount(RotateAnimation.INFINITE);
-        loader.setTypeface(CloudPrint.fontAwesome);
-        loader.setAnimation(rotateAnimation);
-        rotateAnimation.start();
-    }
-
-    public void hideProgressLoader() {
-        loader.clearAnimation();
-    }
-
-    public final List<String[]> readCsv(Context context) {
-        List<String[]> questionList = new ArrayList<String[]>();
-        AssetManager assetManager = context.getResources().getAssets();
-
-        try {
-            showProgressLoader();
-            InputStream csvStream = assetManager.open(CSV_PATH);
-            InputStreamReader csvStreamReader = new InputStreamReader(csvStream);
-            CSVReader csvReader = new CSVReader(csvStreamReader);
-            String[] line;
-
-            // throw away the header
-            csvReader.readNext();
-
-            while ((line = csvReader.readNext()) != null) {
-                questionList.add(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return questionList;
-    }
+//    public void showProgressLoader() {
+//        RotateAnimation rotateAnimation = new RotateAnimation(0, 359, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+//        rotateAnimation.setDuration(1600);
+//        rotateAnimation.setRepeatCount(RotateAnimation.INFINITE);
+//        loader.setTypeface(CloudPrint.fontAwesome);
+//        loader.setAnimation(rotateAnimation);
+//        rotateAnimation.start();
+//    }
+//
+//    public void hideProgressLoader() {
+//        loader.clearAnimation();
+//    }
 
 
-    public void initViews() {
-        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        loader = (TextView) findViewById(R.id.loader);
-        autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-    }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -262,13 +250,12 @@ public class MapActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
 
         }  else if (id == R.id.nav_share) {
-            CloudPrint.showToast("Sharing Message");
             String sharingMessage = "Welcome to Cloud Print application!";
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);

@@ -44,7 +44,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.PrintActivity"></activity>
+        <activity android:name=".Activities.PrintActivity" />
+        <activity android:name=".Activities.MapListView"></activity>
     </application>
 
 </manifest>

@@ -5,15 +5,15 @@
         <item
             android:id="@+id/nav_camera"
             android:icon="@drawable/ic_menu_camera"
-            android:title="Upload Files" />
+            android:title="Account" />
         <item
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Print Preview" />
+            android:title="History" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="Saved Locations" />
+            android:title="Payment" />
     </group>
 
     <item android:title="Communicate">
@@ -25,7 +25,7 @@
             <item
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:title="Feedback" />
         </menu>
     </item>
 

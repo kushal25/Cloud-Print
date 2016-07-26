@@ -1,6 +1,7 @@
 package com.cloudprint;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -10,10 +11,19 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.opencsv.CSVReader;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
 public class CloudPrint {
 
     private static Context context;
     public static Typeface fontAwesome = null;
+    private  static String CSV_PATH = "sample.csv";
     public static void appInit(Context cx) {
         P.read(cx);
         context = cx;
@@ -50,6 +60,28 @@ public class CloudPrint {
                 });
 
         sb.show();
+    }
+
+    public static List<String[]> readCsv(Context context) {
+        List<String[]> questionList = new ArrayList<String[]>();
+        AssetManager assetManager = context.getResources().getAssets();
+
+        try {
+            InputStream csvStream = assetManager.open(CSV_PATH);
+            InputStreamReader csvStreamReader = new InputStreamReader(csvStream);
+            CSVReader csvReader = new CSVReader(csvStreamReader);
+            String[] line;
+
+            // throw away the header
+            csvReader.readNext();
+
+            while ((line = csvReader.readNext()) != null) {
+                questionList.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return questionList;
     }
 
     public static Boolean isGPSEnabled()
