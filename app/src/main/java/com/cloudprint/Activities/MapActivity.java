@@ -57,6 +57,7 @@ import com.opencsv.CSVReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,7 +75,6 @@ public class MapActivity extends AppCompatActivity
     private Criteria criteria;
     private Location location;
     private ActionBarDrawerToggle actionBarDrawerToggle;
-
     private String CSV_PATH = "sample.csv";
 
     @Override
@@ -82,7 +82,6 @@ public class MapActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         initViews();
-        populateData();
         //setSupportActionBar(toolbar);
 
         mapFragment.getMapAsync(this);
@@ -111,22 +110,37 @@ public class MapActivity extends AppCompatActivity
 
     }
 
-    public void populateData() {
-        Markers markers = new Markers();
-        List<String[]> data = readCsv(this);
+    public void populateData(GoogleMap gMap) {
+        final GoogleMap mMap = gMap;
+        final List<String[]> data = readCsv(getApplicationContext());
         Log.d(TAG,"Hello");
-        Log.d(TAG,data.size()+"");
-        //markers.setLatitude();
+
+        MapActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                for (int i = 0; i < 10; i++) {
+
+
+                    mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(data.get(i)[26]), Double.parseDouble(data.get(i)[25])))
+                            .title(data.get(i)[4])
+                            .snippet("this shows desciption of place"));
+
+
+                }
+            }
+        });
+
     }
 
     public final List<String[]> readCsv(Context context) {
         List<String[]> questionList = new ArrayList<String[]>();
-        AssetManager assetManager = context.getAssets();
+        AssetManager assetManager = context.getResources().getAssets();
 
         try {
 
             InputStream csvStream = assetManager.open(CSV_PATH);
-            Log.d(TAG,"Hello1");
             InputStreamReader csvStreamReader = new InputStreamReader(csvStream);
             CSVReader csvReader = new CSVReader(csvStreamReader);
             String[] line;
@@ -139,7 +153,6 @@ public class MapActivity extends AppCompatActivity
             }
         } catch (IOException e) {
             e.printStackTrace();
-            Log.d(TAG,"Hello2");
         }
         return questionList;
     }
@@ -181,6 +194,8 @@ public class MapActivity extends AppCompatActivity
                 googleMap.getUiSettings().setZoomControlsEnabled(true);
                 googleMap.getUiSettings().setMapToolbarEnabled(true);
                 googleMap.getUiSettings().setScrollGesturesEnabled(true);
+
+                populateData(mMap);
 
                 googleMap.addMarker(new MarkerOptions()
                         .position(new LatLng(37.3404372, -121.8976136))

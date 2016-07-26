@@ -3,24 +3,24 @@ package com.cloudprint;
 
 public class Markers {
 
-    public double latitude;
-    public double longitude;
+    public String latitude;
+    public String longitude;
     public String title;
     public String description;
 
-    public void setLatitude(double latitude) {
+    public void setLatitude(String latitude) {
         this.latitude = latitude;
     }
 
-    public double getLatitude() {
+    public String getLatitude() {
         return latitude;
     }
 
-    public void setLongitude(double longitude) {
+    public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
 
-    public double getLongitude() {
+    public String getLongitude() {
         return longitude;
     }
 
