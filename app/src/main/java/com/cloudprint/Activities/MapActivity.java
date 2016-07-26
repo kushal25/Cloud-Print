@@ -3,6 +3,7 @@ package com.cloudprint.Activities;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
@@ -242,9 +243,15 @@ public class MapActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_slideshow) {
 
-        } else if (id == R.id.nav_manage) {
+        }  else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_share) {
+            String sharingMessage = "Welcome to Cloud Print application!";
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, sharingMessage);
+            sendIntent.setType("text/plain");
+            String shareTitle = "Cloud Print";
+            startActivity(Intent.createChooser(sendIntent, shareTitle));
 
         } else if (id == R.id.nav_send) {
 
