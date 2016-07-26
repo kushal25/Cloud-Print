@@ -40,7 +40,7 @@ public class CloudPrint {
     {
         final Snackbar sb = Snackbar.make(view, str , Snackbar.LENGTH_LONG);
 
-        sb.setAction("UNDO", new View.OnClickListener() {
+        sb.setAction("Cancel", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         sb.dismiss();

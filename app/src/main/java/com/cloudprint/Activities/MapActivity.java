@@ -1,9 +1,14 @@
 package com.cloudprint.Activities;
 
+import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -22,6 +27,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,90 +41,62 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapActivity extends AppCompatActivity
-        implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener, PlaceSelectionListener {
+        implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
 
-    private GoogleMap mMap;
-    private View v;
     private SupportMapFragment mapFragment;
     private DrawerLayout drawer;
+    private GoogleMap mMap;
     private NavigationView navigationView;
-
-    private TextView mPlaceDetailsText;
-    private TextView mPlaceAttribution;
+    private Toolbar toolbar;
+    private PlaceAutocompleteFragment autocompleteFragment;
+    private String TAG = "Cloud Print";
+    private LocationManager locationManager;
+    private Criteria criteria;
+    private Location location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         initViews();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //setSupportActionBar(toolbar);
         mapFragment.getMapAsync(this);
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//        drawer.setDrawerListener(toggle);
+//        toggle.syncState();
+        //navigationView.setNavigationItemSelectedListener(this);
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                Log.i(TAG, "Place: " + place.getName());
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-        navigationView.setNavigationItemSelectedListener(this);
+                String placeDetailsStr = place.getName() + "\n"
+                        + place.getId() + "\n"
+                        + place.getLatLng().toString() + "\n"
+                        + place.getAddress() + "\n"
+                        + place.getAttributions();
 
+                mMap.addMarker(new MarkerOptions()
+                        .position(place.getLatLng())
+                        .title(place.getAddress().toString()));
 
-        // Retrieve the PlaceAutocompleteFragment.
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                getFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),13));
+                Log.d(TAG,placeDetailsStr);
+            }
 
-        // Register a listener to receive callbacks when a place has been selected or an error has
-        // occurred.
-        autocompleteFragment.setOnPlaceSelectedListener(this);
-
-        // Retrieve the TextViews that will display details about the selected place.
-        mPlaceDetailsText = (TextView) findViewById(R.id.place_details);
-        mPlaceAttribution = (TextView) findViewById(R.id.place_attribution);
-    }
-
-
-    /**
-     * Callback invoked when a place has been selected from the PlaceAutocompleteFragment.
-     */
-    @Override
-    public void onPlaceSelected(Place place) {
-        //Log.i(TAG, "Place Selected: " + place.getName());
-
-        // Format the returned place's details and display them in the TextView.
-        mPlaceDetailsText.setText(formatPlaceDetails(getResources(), place.getName(), place.getId(),
-                place.getAddress(), place.getPhoneNumber(), place.getWebsiteUri()));
-
-        CharSequence attributions = place.getAttributions();
-        if (!TextUtils.isEmpty(attributions)) {
-            mPlaceAttribution.setText(Html.fromHtml(attributions.toString()));
-        } else {
-            mPlaceAttribution.setText("");
-        }
-    }
-
-    /**
-     * Callback invoked when PlaceAutocompleteFragment encounters an error.
-     */
-    @Override
-    public void onError(Status status) {
-        //Log.e(TAG, "onError: Status = " + status.toString());
-
-        Toast.makeText(this, "Place selection failed: " + status.getStatusMessage(),
-                Toast.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Helper method to format information about a place nicely.
-     */
-    private static Spanned formatPlaceDetails(Resources res, CharSequence name, String id,
-                                              CharSequence address, CharSequence phoneNumber, Uri websiteUri) {
-        //Log.e(TAG, res.getString(R.string.place_details, name, id, address, phoneNumber,
-          //      websiteUri));
-        return Html.fromHtml(res.getString(R.string.place_details, name, id, address, phoneNumber,
-                websiteUri));
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i(TAG, "An error occurred: " + status);
+            }
+        });
 
     }
 
@@ -126,9 +104,9 @@ public class MapActivity extends AppCompatActivity
     {
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        //for snackbar usage creating an object of view
-        v = (View) drawer;
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        //navigationView = (NavigationView) findViewById(R.id.nav_view);
+        //toolbar = (Toolbar) findViewById(R.id.toolbar);
+        autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.autocomplete_fragment);
     }
 
     @Override
@@ -137,16 +115,25 @@ public class MapActivity extends AppCompatActivity
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 || ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
         {
+            mMap = googleMap;
             if(CloudPrint.isGPSEnabled())
             {
+                View locationButton = mapFragment.getView().findViewById(Integer.parseInt("2"));
+                RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams)locationButton.getLayoutParams();
+
+                rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+                rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+                rlp.setMargins(0, 850, 180, 0);
                 googleMap.setMyLocationEnabled(true);
-                Location location = googleMap.getMyLocation();
+                locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                criteria = new Criteria();
+                location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
                 if (location != null) {
 
                     LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 13));
                 } else {
-                    Log.i("location", "Its NULL");
+                    Log.d(TAG, "Its NULL");
                 }
 
                 googleMap.getUiSettings().setZoomControlsEnabled(true);
@@ -165,12 +152,12 @@ public class MapActivity extends AppCompatActivity
             }
             else
             {
-                CloudPrint.showSnackBar(v,"Enable GPS");
+                CloudPrint.showSnackBar(drawer,"Enable GPS");
             }
         }
         else
         {
-            CloudPrint.showSnackBar(v,"Need Location Permission");
+            CloudPrint.showSnackBar(drawer,"Need Location Permission");
         }
     }
 
