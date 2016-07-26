@@ -31,6 +31,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,6 +53,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.opencsv.CSVReader;
 
@@ -76,20 +79,23 @@ public class MapActivity extends AppCompatActivity
     private Location location;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private String CSV_PATH = "sample.csv";
+    private TextView loader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         initViews();
-        //setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
 
         mapFragment.getMapAsync(this);
-//        actionBarDrawerToggle=new ActionBarDrawerToggle(this,  drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//
-//        drawer.setDrawerListener(actionBarDrawerToggle);
-//        actionBarDrawerToggle.syncState();
-//        navigationView.setNavigationItemSelectedListener(this);
+        actionBarDrawerToggle=new ActionBarDrawerToggle(this,  drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
+        drawer.setDrawerListener(actionBarDrawerToggle);
+        drawer.bringToFront();
+        navigationView.requestLayout();
+        actionBarDrawerToggle.syncState();
+        navigationView.setNavigationItemSelectedListener(this);
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -108,18 +114,18 @@ public class MapActivity extends AppCompatActivity
             }
         });
 
+
     }
 
     public void populateData(GoogleMap gMap) {
         final GoogleMap mMap = gMap;
         final List<String[]> data = readCsv(getApplicationContext());
         Log.d(TAG,"Hello");
-
         MapActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
 
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < 20; i++) {
 
 
                     mMap.addMarker(new MarkerOptions()
@@ -131,7 +137,21 @@ public class MapActivity extends AppCompatActivity
                 }
             }
         });
+        hideProgressLoader();
 
+    }
+
+    public void showProgressLoader() {
+        RotateAnimation rotateAnimation = new RotateAnimation(0, 359, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        rotateAnimation.setDuration(1600);
+        rotateAnimation.setRepeatCount(RotateAnimation.INFINITE);
+        loader.setTypeface(CloudPrint.fontAwesome);
+        loader.setAnimation(rotateAnimation);
+        rotateAnimation.start();
+    }
+
+    public void hideProgressLoader() {
+        loader.clearAnimation();
     }
 
     public final List<String[]> readCsv(Context context) {
@@ -139,7 +159,7 @@ public class MapActivity extends AppCompatActivity
         AssetManager assetManager = context.getResources().getAssets();
 
         try {
-
+            showProgressLoader();
             InputStream csvStream = assetManager.open(CSV_PATH);
             InputStreamReader csvStreamReader = new InputStreamReader(csvStream);
             CSVReader csvReader = new CSVReader(csvStreamReader);
@@ -163,6 +183,7 @@ public class MapActivity extends AppCompatActivity
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        loader = (TextView) findViewById(R.id.loader);
         autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.autocomplete_fragment);
     }
 
@@ -199,13 +220,23 @@ public class MapActivity extends AppCompatActivity
 
                 googleMap.addMarker(new MarkerOptions()
                         .position(new LatLng(37.3404372, -121.8976136))
-                        .title("Vila Torino")
+                        .title("Villa Torino")
                         .snippet("this shows desciption of place"));
 
                 googleMap.addMarker(new MarkerOptions()
                         .position(new LatLng(37.343329, -121.8915832))
                         .title("Mi Pueblo")
                         .snippet("this shows desciption of place"));
+
+                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+
+                        Intent print = new Intent(MapActivity.this, PrintActivity.class);
+                        startActivity(print);
+                        return true;
+                    }
+                });
             } else {
                 CloudPrint.showSnackBar(drawer, "Enable GPS");
             }
@@ -224,28 +255,6 @@ public class MapActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.map, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -259,7 +268,7 @@ public class MapActivity extends AppCompatActivity
         } else if (id == R.id.nav_slideshow) {
 
         }  else if (id == R.id.nav_share) {
-
+            CloudPrint.showToast("Sharing Message");
             String sharingMessage = "Welcome to Cloud Print application!";
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
