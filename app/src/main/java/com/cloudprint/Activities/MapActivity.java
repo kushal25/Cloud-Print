@@ -86,7 +86,7 @@ public class MapActivity extends AppCompatActivity
         setContentView(R.layout.activity_map);
         initViews();
         setSupportActionBar(toolbar);
-
+        CloudPrint.isNetworkOK(MapActivity.this);
         mapFragment.getMapAsync(this);
         actionBarDrawerToggle=new ActionBarDrawerToggle(this,  drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
@@ -228,9 +228,18 @@ public class MapActivity extends AppCompatActivity
             } else {
                 CloudPrint.showSnackBar(drawer, "Enable GPS");
             }
-        } else {
+        }
+        else {
             CloudPrint.showSnackBar(drawer, "Need Location Permission");
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mapFragment.getMapAsync(this);
+        CloudPrint.isNetworkOK(MapActivity.this);
+
     }
 
     @Override

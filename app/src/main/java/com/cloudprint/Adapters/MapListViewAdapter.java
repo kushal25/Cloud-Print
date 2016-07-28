@@ -85,7 +85,7 @@ public class MapListViewAdapter extends BaseAdapter {
             holder.description.setText(m.getDescription());
             holder.latitude.setText(m.getLatitude()+"");
             holder.longitude.setText(m.getLongitude()+"");
-            CloudPrint.showToast(position+"");
+            //CloudPrint.showToast(position+"");
             return rowView;
         } catch (Exception e) {
             return rowView;
