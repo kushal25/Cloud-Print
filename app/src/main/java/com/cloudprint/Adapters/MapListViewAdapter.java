@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
@@ -14,12 +15,14 @@ import com.cloudprint.Markers;
 import com.cloudprint.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class MapListViewAdapter extends BaseAdapter {
+public class MapListViewAdapter extends ArrayAdapter<Markers> {
     private Activity context;
     private ArrayList<Markers> markers = new ArrayList<>();
     ViewHolder holder;
     Markers m;
+    private int row;
 
     static class ViewHolder {
         public TextView title;
@@ -28,15 +31,12 @@ public class MapListViewAdapter extends BaseAdapter {
         public TextView longitude;
     }
 
-    public MapListViewAdapter(Activity context, ArrayList<Markers> m) {
-        super();
-        this.context = context;
-        this.markers = m;
-    }
-
-    public MapListViewAdapter(Activity context) {
-        super();
-        this.context = context;
+    public MapListViewAdapter(Activity act, int row,
+                           ArrayList<Markers> items) {
+        super(act, row, items);
+        this.context = act;
+        this.row = row;
+        this.markers = items;
     }
 
     public void concatList(ArrayList<Markers> newMarkers) {
@@ -50,11 +50,6 @@ public class MapListViewAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
-        return this.markers.get(position);
-    }
-
-    @Override
     public long getItemId(int position) {
         return position;
     }
@@ -65,8 +60,6 @@ public class MapListViewAdapter extends BaseAdapter {
         try {
 
             m = this.markers.get(position);
-            //Log.d("Cloud", markers.get(position).getTitle());
-            // reuse views
             if (rowView == null) {
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 rowView = inflater.inflate(R.layout.maplist, null);
@@ -85,7 +78,6 @@ public class MapListViewAdapter extends BaseAdapter {
             holder.description.setText(m.getDescription());
             holder.latitude.setText(m.getLatitude()+"");
             holder.longitude.setText(m.getLongitude()+"");
-            //CloudPrint.showToast(position+"");
             return rowView;
         } catch (Exception e) {
             return rowView;

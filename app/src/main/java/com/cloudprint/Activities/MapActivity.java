@@ -33,6 +33,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,7 +79,6 @@ public class MapActivity extends AppCompatActivity
     private Criteria criteria;
     private Location location;
     private ActionBarDrawerToggle actionBarDrawerToggle;
-    private TextView loader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +91,7 @@ public class MapActivity extends AppCompatActivity
         actionBarDrawerToggle=new ActionBarDrawerToggle(this,  drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
         drawer.setDrawerListener(actionBarDrawerToggle);
+        drawer.openDrawer(GravityCompat.START);
         navigationView.bringToFront();
         drawer.requestLayout();
         actionBarDrawerToggle.syncState();
@@ -132,7 +133,6 @@ public class MapActivity extends AppCompatActivity
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //loader = (TextView) findViewById(R.id.loader);
         autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.autocomplete_fragment);
     }
 
@@ -155,22 +155,7 @@ public class MapActivity extends AppCompatActivity
                 }
             }
         });
-        //hideProgressLoader();
-
     }
-
-//    public void showProgressLoader() {
-//        RotateAnimation rotateAnimation = new RotateAnimation(0, 359, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-//        rotateAnimation.setDuration(1600);
-//        rotateAnimation.setRepeatCount(RotateAnimation.INFINITE);
-//        loader.setTypeface(CloudPrint.fontAwesome);
-//        loader.setAnimation(rotateAnimation);
-//        rotateAnimation.start();
-//    }
-//
-//    public void hideProgressLoader() {
-//        loader.clearAnimation();
-//    }
 
 
 
@@ -203,7 +188,6 @@ public class MapActivity extends AppCompatActivity
                 googleMap.getUiSettings().setZoomControlsEnabled(true);
                 googleMap.getUiSettings().setMapToolbarEnabled(true);
                 googleMap.getUiSettings().setScrollGesturesEnabled(true);
-
                 populateData(mMap);
 
                 googleMap.addMarker(new MarkerOptions()
@@ -237,7 +221,7 @@ public class MapActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        mapFragment.getMapAsync(this);
+        //mapFragment.getMapAsync(this);
         CloudPrint.isNetworkOK(MapActivity.this);
 
     }
