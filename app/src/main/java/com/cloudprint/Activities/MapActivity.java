@@ -52,6 +52,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -116,7 +117,8 @@ public class MapActivity extends AppCompatActivity
 
                 mMap.addMarker(new MarkerOptions()
                         .position(place.getLatLng())
-                        .title(place.getAddress().toString()));
+                        .title(place.getAddress().toString()))
+                        .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
 
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 13));
             }
@@ -203,7 +205,7 @@ public class MapActivity extends AppCompatActivity
                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(Marker marker) {
-
+                        
                         Intent print = new Intent(MapActivity.this, PrintActivity.class);
                         startActivity(print);
                         return true;
