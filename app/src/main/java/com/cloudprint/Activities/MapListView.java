@@ -44,14 +44,13 @@ public class MapListView extends AppCompatActivity {
 
                 final List<String[]> data = CloudPrint.readCsv(getApplicationContext());
 
-                for (int i = 0; i < 20; i++) {
+                for (int i = 0; i < data.size(); i++) {
                     Markers marker = new Markers();
                     marker.setLatitude(Double.parseDouble(data.get(i)[26]));
                     marker.setLongitude(Double.parseDouble(data.get(i)[25]));
                     marker.setTitle(data.get(i)[4]);
                     marker.setDescription(data.get(i)[5] + "," + data.get(i)[6]);
                     ms.add(marker);
-                    Log.d("Cloud",ms.get(i).getTitle());
                 }
     }
 }
