@@ -45,6 +45,7 @@ public class PrintActivity extends AppCompatActivity {
     private Document doc;
     private DocServiceImpl docService;
     private UserServiceImpl userService;
+    private String uploadUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +59,19 @@ public class PrintActivity extends AppCompatActivity {
                 showChooser();
             }
         });
+        print.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                printFile(uploadUrl);
+            }
+        });
     }
 
     private void initViews()
     {
         upload = (Button) findViewById(R.id.upload);
         print = (Button) findViewById(R.id.print);
+        print.setVisibility(View.GONE);
     }
 
     private void showChooser() {
@@ -128,6 +136,20 @@ public class PrintActivity extends AppCompatActivity {
 
     }
 
+    public void printFile(String url)
+    {
+        try {
+            Uri uri = Uri.parse("googlechrome://navigate?url=" + url);
+            Intent i = new Intent(Intent.ACTION_VIEW, uri);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+        } catch (ActivityNotFoundException e) {
+            // Chrome is probably not installed
+        }
+
+
+    }
+
     public void uploadFile(String sourceFileUri) {
 
         final String fileName = sourceFileUri;
@@ -184,15 +206,12 @@ public class PrintActivity extends AppCompatActivity {
                 Log.i("Document", "Name is " + doc.getName());
                 Log.i("Document", "URL is " + doc.getUrl());
 
-                String url = doc.getUrl();
-                try {
-                    Uri uri = Uri.parse("googlechrome://navigate?url=" + url);
-                    Intent i = new Intent(Intent.ACTION_VIEW, uri);
-                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(i);
-                } catch (ActivityNotFoundException e) {
-                    // Chrome is probably not installed
+                uploadUrl= doc.getUrl();
+                if(uploadUrl.length()>0)
+                {
+                    print.setVisibility(View.VISIBLE);
                 }
+
 
 
             }
