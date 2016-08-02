@@ -29,4 +29,16 @@
     <string name="title_activity_test">TestActivity</string>
     <string name="title_activity_main">MainActivity</string>
 
+    <string name="welcome_msg">Lets Get You Started!!</string>
+    <string name="signup">Sign Up</string>
+    <string name="login">Login</string>
+    <string name="name">Name</string>
+    <string name="email">Enter Email Address</string>
+    <string name="mobno">Enter Mobile Number</string>
+    <string name="pass">Enter Password</string>
+    <string name="repass">ReEnter Password</string>
+    <string name="logout">Logout</string>
+    <string name="share">Share</string>
+    <string name="share_title">Share with</string>
+
 </resources>

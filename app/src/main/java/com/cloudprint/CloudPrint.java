@@ -1,6 +1,9 @@
 package com.cloudprint;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.location.LocationManager;
@@ -114,6 +117,29 @@ public class CloudPrint {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public static void showAlertDialog(final Context context, String title, String message) {
+        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+
+        // Setting Dialog Title
+        alertDialog.setTitle(title);
+
+        // Setting Dialog Message
+        alertDialog.setMessage(message);
+
+
+        // Setting OK Button
+        alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent settings = new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS);
+                settings.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                context.startActivity(settings);
+            }
+        });
+
+        // Showing Alert Message
+        alertDialog.show();
     }
 
     public static final class P {

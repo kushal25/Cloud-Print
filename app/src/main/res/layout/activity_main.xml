@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.cloudprint.Activities.MainActivity">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="380dp">
+    </android.support.v4.view.ViewPager>
+
+    <Button
+        android:id="@+id/signup"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_below="@+id/pager"
+        android:background="#FF0000"
+        android:text="@string/signup" />
+
+    <Button
+        android:id="@+id/login"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_below="@+id/signup"
+        android:background="#2E64FE"
+        android:text="@string/login" />
+
+</RelativeLayout>

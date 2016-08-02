@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.cloudprint.Activities.SignupActivity">
+
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/pass"
+        android:layout_marginTop="27dp"
+        android:ems="10"
+        android:text="Kushal"
+        android:hint="@string/name"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/pass"
+        android:layout_below="@+id/name"
+        android:text="kushalmalani@gmail.com"
+        android:layout_marginTop="27dp"
+        android:ems="10"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress" />
+
+    <EditText
+        android:id="@+id/mobno"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/pass"
+        android:layout_below="@+id/email"
+        android:text="5125786728"
+        android:layout_marginTop="27dp"
+        android:ems="10"
+        android:hint="@string/mobno"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/pass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mobno"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:ems="10"
+        android:hint="@string/pass"
+        android:inputType="textPassword" />
+
+
+
+    <EditText
+        android:id="@+id/repass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/pass"
+        android:layout_below="@+id/pass"
+        android:layout_marginTop="30dp"
+        android:ems="10"
+        android:hint="@string/repass"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/signup_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/repass"
+        android:layout_alignRight="@+id/repass"
+        android:layout_below="@+id/repass"
+        android:layout_marginTop="82dp"
+        android:background="#F58CDE"
+        android:text="@string/signup"
+        android:textSize="30sp" />
+</RelativeLayout>
