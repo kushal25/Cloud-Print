@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.cloudprint" >
+    package="com.cloudprint">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -30,7 +30,7 @@
         android:icon="@drawable/printingcloud"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@android:style/Theme.Holo.Light" >
+        android:theme="@android:style/Theme.Holo.Light">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAn7TiRwAf-fN4pMvNcZKKLKNYSXHjGjgM" />
@@ -42,8 +42,7 @@
             android:name=".Activities.MapActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".Activities.PrintActivity"
             android:screenOrientation="portrait"
@@ -55,8 +54,8 @@
         <activity
             android:name=".Activities.MainActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait" >
-            <intent-filter android:label="@string/app_name" >
+            android:screenOrientation="portrait">
+            <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -67,7 +66,7 @@
             android:enabled="@bool/use_activity"
             android:exported="true"
             android:label="@string/choose_file"
-            android:theme="@style/ChooserTheme" >
+            android:theme="@style/ChooserTheme">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
 
@@ -83,6 +82,7 @@
         <activity
             android:name=".Activities.LoginActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".Activities.AccountActivity"></activity>
     </application>
 
 </manifest>

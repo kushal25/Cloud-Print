@@ -2,6 +2,7 @@ package com.cloudprint.Activities;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,6 +23,7 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -80,11 +82,15 @@ public class MapActivity extends AppCompatActivity
     private Criteria criteria;
     private Location location;
     private ActionBarDrawerToggle actionBarDrawerToggle;
+    private String name, email, mobile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        name = getIntent().getExtras().getString("name");
+        email = getIntent().getExtras().getString("email");
+        mobile = getIntent().getExtras().getString("mobno");
         initViews();
         setSupportActionBar(toolbar);
         CloudPrint.isNetworkOK(MapActivity.this);
@@ -245,7 +251,13 @@ public class MapActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-
+            Intent user_con = new Intent(MapActivity.this,AccountActivity.class);
+            user_con.putExtra("name", name);
+            user_con.putExtra("email", email);
+            user_con.putExtra("mobno", mobile);
+            Bundle bndlanimation =
+                    ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.animation1,R.anim.animation2).toBundle();
+            startActivity(user_con, bndlanimation);
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -260,7 +272,8 @@ public class MapActivity extends AppCompatActivity
             startActivity(Intent.createChooser(sendIntent, shareTitle));
 
         } else if (id == R.id.nav_send) {
-
+            Intent intent = new Intent(MapActivity.this, LoginActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

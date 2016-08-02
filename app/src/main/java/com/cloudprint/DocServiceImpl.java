@@ -49,56 +49,56 @@ public class DocServiceImpl implements DocService{
             e1.printStackTrace();
         }
 
-        UserClient.addHeader("X-Auth-Token", user.getToken());
-        UserClient.post(context, "api/users/doc/", entity, "application/json", new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseString) {
-                //super.onSuccess(statusCode, headers, responseString);
-                String str;
-                str = new String(responseString);
-                Log.i("Success", str);
-                try {
-                    JSONObject jsonObj = new JSONObject(str);
-                    //docs = jsonObj.getString("document");
-                    Log.i("jsonString", jsonObj.toString());
-                    JSONArray array = jsonObj.getJSONArray("document");
-                    Log.i("json", "Length is " +array.length());
-                    for(int i = 0 ; i < array.length() ; i++){
-                        if(doc.getUrl().equals(array.getJSONObject(i).getString("doc_url").replace("\\", ""))){
-                            doc.set_id(array.getJSONObject(i).getString("_id"));
-                        }
-                    }
-                    Log.i("DocumentID", doc.get_id());
-                } catch (Exception e) {
-                    Log.e("Json", "Error");
-                }
-
-
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable throwable) {
-                Log.e("Post", "failure: " + new String(responseBody));
-                Log.e("Post", "failurecode: " + statusCode);
-
-                String str = new String(responseBody);
-                String message="";
-
-                try {
-                    JSONObject resp = new JSONObject(str);
-                    message = resp.getString("error");
-                }catch(Exception e){
-                    Log.e("Failure Response", "Error");
-                }
-                if(statusCode == 400){
-                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                }
-
-                //super.onFailure(statusCode, headers, responseBody, throwable);
-            }
-
-
-        });
+//        UserClient.addHeader("X-Auth-Token", user.getToken());
+//        UserClient.post(context, "api/users/doc/", entity, "application/json", new AsyncHttpResponseHandler() {
+//            @Override
+//            public void onSuccess(int statusCode, Header[] headers, byte[] responseString) {
+//                //super.onSuccess(statusCode, headers, responseString);
+//                String str;
+//                str = new String(responseString);
+//                Log.i("Success", str);
+//                try {
+//                    JSONObject jsonObj = new JSONObject(str);
+//                    //docs = jsonObj.getString("document");
+//                    Log.i("jsonString", jsonObj.toString());
+//                    JSONArray array = jsonObj.getJSONArray("document");
+//                    Log.i("json", "Length is " +array.length());
+//                    for(int i = 0 ; i < array.length() ; i++){
+//                        if(doc.getUrl().equals(array.getJSONObject(i).getString("doc_url").replace("\\", ""))){
+//                            doc.set_id(array.getJSONObject(i).getString("_id"));
+//                        }
+//                    }
+//                    Log.i("DocumentID", doc.get_id());
+//                } catch (Exception e) {
+//                    Log.e("Json", "Error");
+//                }
+//
+//
+//            }
+//
+//            @Override
+//            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable throwable) {
+//                Log.e("Post", "failure: " + new String(responseBody));
+//                Log.e("Post", "failurecode: " + statusCode);
+//
+//                String str = new String(responseBody);
+//                String message="";
+//
+//                try {
+//                    JSONObject resp = new JSONObject(str);
+//                    message = resp.getString("error");
+//                }catch(Exception e){
+//                    Log.e("Failure Response", "Error");
+//                }
+//                if(statusCode == 400){
+//                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+//                }
+//
+//                //super.onFailure(statusCode, headers, responseBody, throwable);
+//            }
+//
+//
+//        });
 
     }
 

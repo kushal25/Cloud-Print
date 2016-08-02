@@ -176,7 +176,7 @@ public class PrintActivity extends AppCompatActivity {
                 doc.setUrl(fileURL.toString());
 
                 docService = new DocServiceImpl();
-                user1.setToken("SAmple");
+                user1.setToken("Sample");
                 docService.postDocument(user1, doc, context);
 
                 Log.i("Document", "ID is " + user1.get_id());
